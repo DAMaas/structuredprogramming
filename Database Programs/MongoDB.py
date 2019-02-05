@@ -1,4 +1,3 @@
-import pymongo
 from pymongo import MongoClient
 
 # Initialize all variables needed to connect
@@ -7,14 +6,31 @@ address = "mongodb://localhost:27017/"
 
 # Functions
 
-# Get all databases from a running MongoDB instance
 def getDatabases(address):
+    """
+    Get all databases from a running MongoDB instance.
+
+    Args:
+        address: URI of the MongoDB instance. For example: "mongodb://localhost:27017/"
+
+    Returns:
+        databaseList: A list of all the databases
+    """
+
     client = MongoClient(address)
     databaseList = client.list_database_names()
     return databaseList
 
-# Get all collections from a single database or all databases
 def getCollections(database):
+    """
+    Get all collections from a or all databases in a running MongoDB instance.
+
+    Args:
+        database: String or list with database names. For example: "testdb" or ["testdb1", "testdb2", "testdb3"]
+
+    Returns:
+        collectionDict: A dictionary with the database as key and the collections as value.
+    """
     client = MongoClient(address)
     collectionDict = {}
     # Is the passed database variable is a list
