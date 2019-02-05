@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+import json
 
 # Initialize all variables needed to connect
 
@@ -45,6 +46,17 @@ def getCollections(database):
         collectionDict[database] = db.list_collection_names()
         return collectionDict
 
+def insertData(file):
+    # database, folder, recursive
+
+    with open(file, "r") as read_file:
+        jsondata = json.load(read_file)
+    # check if recursive
+    # check if folder accessible
+    # read all files and insert them in the collection denoted by folder name
+    return jsondata
+
+''' Testing area
 testDatabases = getDatabases(address)
 print(testDatabases)
 
@@ -53,3 +65,6 @@ print(testCollectionsString)
 
 testCollectionsDict = getCollections(testDatabases)
 print(testCollectionsDict)
+'''
+
+insertData("./test.json")
