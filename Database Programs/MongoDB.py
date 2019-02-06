@@ -46,25 +46,27 @@ def getCollections(database):
         collectionDict[database] = db.list_collection_names()
         return collectionDict
 
-def insertData(file):
-    # database, folder, recursive
+def readFiles():
+    with open('/home/phoenix/Documents/School/Structured Programming/Projects/Structured Programming/Database Programs/test.json') as data_file:    
+        data = json.load(data_file)
+    return data
 
-    with open(file, "r") as read_file:
-        jsondata = json.load(read_file)
-    # check if recursive
-    # check if folder accessible
-    # read all files and insert them in the collection denoted by folder name
-    return jsondata
+def getCollectionDocuments(database, collection):
+    documentList = []
+    client = MongoClient(address)
+    client_db = client[database]
+    client_db_collection = client_db[collection]
+    document = client_db_collection.find()
 
-''' Testing area
-testDatabases = getDatabases(address)
-print(testDatabases)
+    for item in document:
+        documentList.append(item)
+    return documentList
 
-testCollectionsString = getCollections("shopping")
-print(testCollectionsString)
+#databaseList = getDatabases(address)
 
-testCollectionsDict = getCollections(testDatabases)
-print(testCollectionsDict)
-'''
+#collectionDict = getCollections(databaseList)
 
-insertData("./test.json")
+#documentList = getCollectionDocuments("shopping", "products")
+
+data = readFiles()
+print(data)
