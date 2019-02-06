@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 import json
+import bson
 
 # Initialize all variables needed to connect
 
@@ -46,11 +47,6 @@ def getCollections(database):
         collectionDict[database] = db.list_collection_names()
         return collectionDict
 
-def readFiles():
-    with open('/home/phoenix/Documents/School/Structured Programming/Projects/Structured Programming/Database Programs/test.json') as data_file:    
-        data = json.load(data_file)
-    return data
-
 def getCollectionDocuments(database, collection):
     documentList = []
     client = MongoClient(address)
@@ -67,6 +63,3 @@ def getCollectionDocuments(database, collection):
 #collectionDict = getCollections(databaseList)
 
 #documentList = getCollectionDocuments("shopping", "products")
-
-data = readFiles()
-print(data)
