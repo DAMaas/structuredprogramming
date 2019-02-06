@@ -1,12 +1,13 @@
 from pymongo import MongoClient
-import json
-import bson
+# import json # Might be needed for parsing data, stay tuned to find out if I get it to work
+# import bson # Might be needed for parsing data, stay tuned to find out if I get it to work
 
 # Initialize all variables needed to connect
 
 address = "mongodb://localhost:27017/"
 
 # Functions
+
 
 def getDatabases(address):
     """
@@ -22,6 +23,7 @@ def getDatabases(address):
     client = MongoClient(address)
     databaseList = client.list_database_names()
     return databaseList
+
 
 def getCollections(database):
     """
@@ -46,6 +48,7 @@ def getCollections(database):
         db = client[database]
         collectionDict[database] = db.list_collection_names()
         return collectionDict
+
 
 def getCollectionDocuments(database, collection):
     documentList = []
