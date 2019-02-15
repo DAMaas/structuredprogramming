@@ -1,15 +1,20 @@
+# Import dependencies
+
 from pymongo import MongoClient
 # import json # Might be needed for parsing data, stay tuned to find out if I get it to work
 # import bson # Might be needed for parsing data, stay tuned to find out if I get it to work
 
-# Initialize all variables needed to connect
+
+# Initialize variables
+
 
 address = "mongodb://localhost:27017/"
 
-# Functions
+
+# Define functions
 
 
-def getDatabases(address="mongodb://localhost:27017/"):
+def getDatabases(address):
     """
     Get all databases from a running MongoDB instance.
 
@@ -25,7 +30,7 @@ def getDatabases(address="mongodb://localhost:27017/"):
     return databaseList
 
 
-def getCollections(database):
+def getCollections(address, database):
     """
     Get all collections from a or multiple database(s) in a running MongoDB instance.
 
@@ -50,7 +55,7 @@ def getCollections(database):
         return collectionDict
 
 
-def getCollectionDocuments(database, collection):
+def getCollectionDocuments(address, database, collection):
     """
     Get all documents from a specific collection.
 
@@ -72,7 +77,7 @@ def getCollectionDocuments(database, collection):
     return documentList
 
 
-def getDocumentAtIndex(database, collection, index="0"):
+def getDocumentAtIndex(address, database, collection, index="0"):
     """
     Get a document from a collection at a specific index.
 
@@ -87,7 +92,7 @@ def getDocumentAtIndex(database, collection, index="0"):
     return document
 
 
-def searchDocuments(datbase, collection, searchterm, partialmatch=True, casesensitive=False):
+def searchDocuments(address, database, collection, searchterm, partialmatch=True, casesensitive=False, firstonly=True):
     """
     Search for documents where the name matches the search term.
 
@@ -97,13 +102,15 @@ def searchDocuments(datbase, collection, searchterm, partialmatch=True, casesens
         searchterm: String with the term to search for. For example: "Andrelon", "Jack" or "February".
         partialmatch: Whether the search term has to be matched exactly or partially. True or False.
         casesensitive: Whether the search term will only match the exact case. True or False.
+        firstonly: Whether the function will return only the first match. True or False.
 
     Returns:
-        result: The result of the function used.
+        resultingDocuments: The resulting document(s).
     """
+    return resultingDocuments
 
 
-def parseDocuments(database, collection, function):
+def parseDocuments(address, database, collection, function):
     """
     Parse all documents from a collection with a function.
 
@@ -115,7 +122,7 @@ def parseDocuments(database, collection, function):
     Returns:
         result: The result of the function used.
     """
-    return
+    return result
 
 
 #databaseList = getDatabases(address)
