@@ -1,21 +1,24 @@
 import MongoDB as mdb
 
 
-firstdoc = mdb.getSingleDocument(filter={"_id": False, "name": True})
-startwithR = mdb.getSingleDocument({'name': {'$regex': '^R'}}, filter={
-                                   "_id": False, "name": True})
-priceList = mdb.getAllDocuments(
-    filter={"_id": False, "price.selling_price": True})
+# Import documents
+firstDocument = mdb.getFirstDocument()
+allDocuments = mdb.getAllDocuments()
 
-total = 0
-count = 0
 
-for item in priceList:
-    total += item["price"]["selling_price"]
-    count += 1
+# Get the first document and only output name and price
+docName = mdb.filterOutputFields(firstDocument, "name")
+docPrice = mdb.filterOutputFields(firstDocument, "price", "selling_price")
+print("The first product, " + str(docName) +
+      ", sells for " + str(docPrice / 100) + " euro.")
 
-average = total / count / 100
 
-print("Eerste product in de database: " + str(firstdoc))
-print("Eerste product dat begint met R: " + str(startwithR))
-print("De gemiddelde prijs is " + str(average) + " euro")
+# Get the first document that starts with R
+docWithR = mdb.filterFieldStartsWith(
+    allDocuments, field="name", value="R", firstOnly=True)
+print("First product that starts with R: " + str(docWithR))
+
+
+# Get average price
+averagePrice = mdb.filterAverage(allDocuments, "price", "selling_price")
+print("The average price is " + str(averagePrice / 100) + " euro")
