@@ -1,7 +1,10 @@
+# Import dependencies
+
+
 import MongoDB as mdb
 
 
-# Import documents
+# Initialize variables
 firstDocument = mdb.getFirstDocument()
 allDocuments = mdb.getAllDocuments()
 

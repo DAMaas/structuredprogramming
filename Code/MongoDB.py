@@ -2,6 +2,7 @@
 
 
 from pymongo import MongoClient
+from ConfigParser import getConfig
 
 
 # Initialize variables
@@ -20,12 +21,12 @@ def connectMongo(address="mongodb://localhost:27017/", database="shopping", coll
     Connect to the Mongo daemon.
 
     Arguments:
-        address:    URL to connect to.
-        databse:    The database to use.
-        collection: The collection to use.
+        address:        URL to connect to.
+        database:       The database to use.
+        collection:     The collection to use.
 
     Returns:
-        document: The document that is found.
+        client:         The session that is made.
     """
     clientbase = MongoClient(address)
     clientbase_db = clientbase[database]
@@ -86,7 +87,7 @@ def filterOutputFields(documents, field="", subfield="", firstOnly=True):
         firstOnly:  Only return the first document. True or False.
 
     Returns:
-        filter: The result of the filter.
+        filter:     The result of the filter.
     """
 
     if firstOnly == True:
@@ -127,7 +128,7 @@ def filterFieldStartsWith(documents, field="", value="", firstOnly=True):
         firstOnly:  Only return the first document. True or False.
 
     Returns:
-        filter: The result of the filter.
+        filter:     The result of the filter.
     """
 
     filter = "No result found"
@@ -157,7 +158,7 @@ def filterAverage(documents, field="", subfield=""):
         subfield:   The subfield to check.
 
     Returns:
-        filter: The result of the filter.
+        filter:     The result of the filter.
     """
 
     filter = 0
