@@ -1,7 +1,7 @@
 from configparser import ConfigParser
 
 
-def getConfig(filename="database.ini", section="test"):
+def getConfig(filename="Code/Config.ini", section="DEFAULT"):
     config = {}
 
     parser = ConfigParser()

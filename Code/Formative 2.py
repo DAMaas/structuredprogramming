@@ -6,7 +6,7 @@
 
 
 import MongoDB as mdb
-# import PostgreSQL as pg
+import PostgreSQL as pg
 
 
 # Initialize variables

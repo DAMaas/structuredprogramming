@@ -5,29 +5,32 @@ from pymongo import MongoClient
 from ConfigParser import getConfig
 
 
-# Initialize variables
-
-
-address = "mongodb://localhost:27017/"
-database = "shopping"
-collection = "products"
-
-
 # Define functions
 
 
-def connectMongo(address="mongodb://localhost:27017/", database="shopping", collection="products"):
+def connectMongo(address="", database="", collection="", configFile="Code/Config.ini", configSection="MongoDBLogin"):
     """
     Connect to the Mongo daemon.
 
     Arguments:
-        address:        URL to connect to.
-        database:       The database to use.
-        collection:     The collection to use.
+        address:        Overrides config file if specified.
+        database:       Overrides config file if specified.
+        collection:     Overrides config file if specified.
+        configFile:     Name and path of config file.
+        configSection:  Name of the section in the config file.
 
     Returns:
         client:         The session that is made.
     """
+
+    config = getConfig(configFile, configSection)
+    if address == "":
+        address = config["address"]
+    if database == "":
+        database = config["database"]
+    if collection == "":
+        collection = config["collection"]
+
     clientbase = MongoClient(address)
     clientbase_db = clientbase[database]
     clientbase_db_collection = clientbase_db[collection]
@@ -35,7 +38,7 @@ def connectMongo(address="mongodb://localhost:27017/", database="shopping", coll
     return client
 
 
-def getFirstDocument():
+def getFirstDocument(address="", database="", collection=""):
     """
     Get the first document.
 
@@ -47,14 +50,14 @@ def getFirstDocument():
     """
 
     document = []
-    client = connectMongo()
+    client = connectMongo(address, database, collection)
 
     document.append(client.find_one())
 
     return document
 
 
-def getAllDocuments():
+def getAllDocuments(address="", database="", collection=""):
     """
     Get all documents.
 
@@ -66,7 +69,7 @@ def getAllDocuments():
     """
 
     documentList = []
-    client = connectMongo()
+    client = connectMongo(address, database, collection)
 
     documents = client.find()
 
