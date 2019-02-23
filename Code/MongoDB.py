@@ -79,43 +79,58 @@ def getAllDocuments(address="", database="", collection=""):
     return documentList
 
 
-def filterOutputFields(documents, field="", subfield="", firstOnly=True):
+def filterOutputFields(documents, field="", subfield="", outputString=False):
     """
     Filter: Only output a specific field or field and subfield.
 
     Arguments:
-        documents:  List of documents to filter.
-        field:      The field to include.
-        value:      The subfield to include.
-        firstOnly:  Only return the first document. True or False.
+        documents:      List of documents to filter.
+        field:          The field to include.
+        value:          The subfield to include.
+        outputString:   Output as a string. True or False.
 
     Returns:
-        filter:     The result of the filter.
+        filter:         The result of the filter.
     """
 
-    if firstOnly == True:
+    if outputString == True:
         filter = ""
 
         if subfield != "":
-            for item in documents:
-                currentField = item[field][subfield]
+            if isinstance(documents, (list,)):
+                for document in documents:
+                    currentField = document[field][subfield]
+                    filter = currentField
+                    break
+            else:
+                currentField = documents[field][subfield]
                 filter = currentField
-                break
         else:
-            for item in documents:
-                currentField = item[field]
+            if isinstance(documents, (list,)):
+                for document in documents:
+                    currentField = document.get(field)
+                    filter = currentField
+                    break
+            else:
+                currentField = documents.get(field)
                 filter = currentField
-                break
     else:
         filter = []
         if subfield != "":
-            for item in documents:
-                currentField = item[field][subfield]
+            if isinstance(documents, (list,)):
+                for document in documents:
+                    currentField = document[field][subfield]
+                    filter.append(currentField)
+            else:
+                currentField = documents[field][subfield]
                 filter.append(currentField)
-
         else:
-            for item in documents:
-                currentField = item[field]
+            if isinstance(documents, (list,)):
+                for document in documents:
+                    currentField = document.get(field)
+                    filter.append(currentField)
+            else:
+                currentField = documents.get(field)
                 filter.append(currentField)
     return filter
 

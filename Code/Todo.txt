@@ -1,0 +1,39 @@
+Data from Mongo is a big dictionary
+Let a for loop find all the interesting keys and push the value to another variable
+Just format the output in a list or something
+Import it in Postgres
+
+for document in allDocuments:
+  print("Now processing document " + index(allDocuments[document]) + " of " + len(allDocuments))
+  for key in document:
+    if key is in keyList:
+      if key is list:
+        Flatten that shit
+      else:
+        parsedDocument.append(key:document[key])
+
+
+
+
+
+
+
+
+
+    namedict = ({"first_name": "Joshua", "last_name": "Drake"},
+                {"first_name": "Steven", "last_name": "Foo"},
+                {"first_name": "David", "last_name": "Bar"})
+
+    print("""INSERT INTO bar(first_name,last_name) VALUES (%(first_name)s, %(last_name)s)""", namedict)
+
+    executemany(query, vars_list)
+
+    query = """INSERT INTO #table(#fieldname1, #fieldname2) VALUES ( %(#valuename1)s, %(#valuename2)s )"""
+
+    Get data from MongoDB as dictionary
+    Find all fields and paste them into the query
+    Find all values and paste them as values
+
+    for key in MongoData:
+        if key in keylist:
+            processedDocument[key] = MongoData[key]

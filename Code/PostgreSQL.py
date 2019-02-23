@@ -3,8 +3,7 @@
 
 # Import dependencies
 
-
-from psycopg2.extensions import AsIs
+from VariableStore import tableDict
 import psycopg2 as pgc
 from ConfigParser import getConfig
 
@@ -12,7 +11,7 @@ from ConfigParser import getConfig
 # Define functions
 
 
-def connectPostgreSQL(configFile="Code/Config.ini", configSection="PostgreSQLLogin"):
+def connectPostgreSQL(database="", configFile="Code/Config.ini", configSection="PostgreSQLLogin"):
     """
     Connect to the PostgreSQL daemon.
 
@@ -29,19 +28,21 @@ def connectPostgreSQL(configFile="Code/Config.ini", configSection="PostgreSQLLog
     try:
         config = getConfig(configFile, configSection)
         host = config["address"]
-        database = config["database"]
         username = config["username"]
         password = config["password"]
         port = config["port"]
 
-        print('Connecting to the PostgreSQL database...')
+        if database == "":
+            database = config["database"]
+
+        print('Connecting to the PostgreSQL database: %s' % database)
         client = pgc.connect(host=host, database=database,
                              user=username, password=password, port=port)
 
         cursor = client.cursor()
 
         if client.closed == 0 and cursor.closed == 0:
-            print("Connection succeeded.")
+            print("Connection succeeded.\n")
         else:
             print("Client closed: " + str(client.closed) +
                   " Cursor closed: " + str(cursor.closed))
@@ -65,74 +66,64 @@ def disconnectPostgreSQL(client, cursor):
 
     cursor.close()
     client.close()
-    print("Connection closed.")
+    print("Connection closed.\n")
 
 
-def executeCommands(commands):
+def executeCommand(client, cursor, commands):
     """
-    Connect to PostgreSQL, execute commands and disconnect.
+    Execute commands with the cursor.
 
     Arguments:
-        commands: list of commands to execute.
+        client:   The client session.
+        cursor:   The cursor session.
+        commands: List of commands to execute.
 
     Returns:
         Nothing
     """
-
-    client, cursor = connectPostgreSQL()
 
     for command in commands:
         cursor.execute(command)
-        print()  # print output to check
+        client.commit()
+        print("Ran command: " + str(command))
 
-    doIWantToCommit = None
-    while doIWantToCommit not in ("yes", "no"):
-        answer = input("Do you want to commit the changes? (yes/no) ")
-        if answer == "yes":
-            client.commit()
-        elif answer == "no":
-            pass
-        else:
-            print("Please enter yes or no.")
+
+def initDatabase(database):
+    print("<-> Starting database initialization <->")
+
+    client, cursor = connectPostgreSQL(database="postgres")
+    client.set_isolation_level(0)
+    print("Initializing database...")
+
+    cursor.execute(
+        """SELECT EXISTS(SELECT datname FROM pg_catalog.pg_database WHERE lower(datname) = lower('%s'));""" % database)
+    exists = cursor.fetchone()[0]
+
+    if exists:
+        cursor.execute("""DROP DATABASE IF EXISTS %s;""" % database)
+        print("Dropped database: %s" % database)
+
+    cursor.execute("""CREATE DATABASE %s;""" % database)
+    print("Created database: %s\n" % database)
 
     disconnectPostgreSQL(client, cursor)
 
+    addTables(database)
 
-def createQuery(function="INSERT INTO", table="", dataDict={}):
-    """
-    Create a query to use with the executeCommands function.
-
-    Arguments:
-        function:   The SQL function to use.
-        table:      Which table to use.
-        dataDict:   Dictionary of key and value to use.
-
-    Returns:
-        Nothing
-    """
-
-    for key in dataDict:
-        functionDefinition = str(function) + " " + \
-            str(table) + "(" + str(key) + ")"
-        values =
+    print("<-> Succesfully initialized " + database + " <->\n")
 
 
-sql = """INSERT INTO vendors(vendor_name) VALUES(%s)"""
+def addTables(database):
+    client, cursor = connectPostgreSQL(database=database)
 
-cur = conn.cursor()
-cur.executemany(
-    """INSERT INTO bar(first_name,last_name) VALUES (%(first_name)s, %(last_name)s)""", namedict)
+    cursor.execute(
+        """select relname from pg_class where relkind='r' and relname !~ '^(pg_|sql_)';""")
+    print("Current tables: " + str(cursor.fetchall()) + "\n")
 
+    executeCommand(client, cursor, tableDict[database])
 
-song = {
-    'title': 'song 1',
-    'artist': 'artist 1'
-}
+    cursor.execute(
+        """select relname from pg_class where relkind='r' and relname !~ '^(pg_|sql_)';""")
+    print("Tables now: " + str(cursor.fetchall()) + "\n")
 
-columns = song.keys()
-values = [song[column] for column in columns]
-
-insert_statement = 'insert into song_table (%s) values %s'
-
-# cursor.execute(insert_statement, (AsIs(','.join(columns)), tuple(values)))
-print cursor.mogrify(insert_statement, (AsIs(','.join(columns)), tuple(values)))
+    disconnectPostgreSQL(client, cursor)
