@@ -1,17 +1,26 @@
 # Import dependencies
 
-from VariableStore import tableProductsFields, keyListProducts
+
+from VariableStore import tableFieldsProducts, keyListProducts, tableFieldsStock, keyListStock
 import MongoDB as mdb
 import PostgreSQL as pg
 import DataFilter as df
 
 
-# Get all documents
+# initialize PostgreSQL
+pg.initDatabase("webshop")
+
+# Get all documents from MongoDB collection
 allDocuments = mdb.getAllDocuments(collection="products")
-singleDocument = mdb.getFirstDocument(collection="products")
 
-# Filter documents
+# Convert documents for PostgreSQL
+convertedDocumentsProducts = df.convertDocuments(
+    allDocuments, tableFieldsProducts, keyListProducts)
 
-# pg.initDatabase("webshop")
-df.makeDocumentsSQL(allDocuments, "products",
-                    tableProductsFields, keyListProducts)
+convertedDocumentsStock = df.convertDocuments(
+    allDocuments, tableFieldsStock, keyListStock)
+
+print(convertedDocumentsStock)
+
+pg.insertDocuments(convertedDocumentsProducts, "webshop",
+                   "products", tableFieldsProducts)

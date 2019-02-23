@@ -99,9 +99,8 @@ def filterOutputFields(documents, field="", subfield="", outputString=False):
         if subfield != "":
             if isinstance(documents, (list,)):
                 for document in documents:
-                    currentField = document[field][subfield]
+                    currentField = item[subfield]
                     filter = currentField
-                    break
             else:
                 currentField = documents[field][subfield]
                 filter = currentField

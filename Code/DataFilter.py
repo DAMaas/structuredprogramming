@@ -9,21 +9,24 @@ import PostgreSQL as pg
 
 
 def outputInterestingData(documents, keyList):
-
     filteredDict = {}
     processTheseDocuments = documents
+
     if isinstance(processTheseDocuments, (list,)):
         for document in processTheseDocuments:
             for item in keyList:
                 if isinstance(item, list):
-                    field = item[0]
-                    subfield = item[1]
-                    dictKey = str(field) + "." + str(subfield)
-                    filteredDict[dictKey] = mdb.filterOutputFields(
-                        document, field=field, subfield=subfield, outputString=True)
+                    if isinstance(document[item[0]][item[1]], list):
+                        print("HOLLER")
+                    else:
+                        field = item[0]
+                        subfield = item[1]
+                        dictKey = str(field) + "." + str(subfield)
+                        filteredDict[dictKey] = mdb.filterOutputFields(
+                            processTheseDocuments, field=field, subfield=subfield, outputString=True)
                 else:
                     filteredDict[item] = mdb.filterOutputFields(
-                        document, field=item, outputString=True)
+                        processTheseDocuments, field=item, outputString=True)
     else:
         for item in keyList:
             if isinstance(item, list):
@@ -38,22 +41,17 @@ def outputInterestingData(documents, keyList):
     return filteredDict
 
 
-def makeDocumentsSQL(allDocuments, table, tableFields, keyList):
-    # Create query parts
-    queryFields = "("
-    for item in tableFields:
-        queryFields += item
-        queryFields += ", "
-    queryFields = queryFields[:-2] + ")"
-    print(queryFields)
+def convertDocuments(allDocuments, tableFields, keyList):
+    convertedDocuments = []
 
     matchToList = tableFields
     matchFromList = keyList
 
     # Make a filtered dictionary per document
     for document in allDocuments:
-        print("Processing document " +
-              str(allDocuments.index(document) + 1) + " of " + str(len(allDocuments)) + "...")
+        print("Converting document "
+              + str(allDocuments.index(document) + 1) + " of " + str(len(allDocuments)) + "...")
+
         filteredDict = outputInterestingData(document, keyList)
 
         # Massage the filtered dictionary to the right values for SQL
@@ -70,7 +68,67 @@ def makeDocumentsSQL(allDocuments, table, tableFields, keyList):
                 filteredDict[item] = filteredDict.pop(
                     matchFromList[matchToList.index(item)])
 
-        cleanDict = filteredDict
-        print(cleanDict)
+        convertedDocuments.append(filteredDict)
 
-        #cur.execute("""INSERT INTO some_table (an_int, a_date, another_date, a_string) VALUES (%(int)s, %(date)s, %(date)s, %(str)s);""", {'int': 10, 'str': "O'Reilly", 'date': datetime.date(2005, 11, 18)})
+    print(str(len(allDocuments)) + " documents converted succesfully\n")
+
+    return convertedDocuments
+
+
+# def convertNestedDocuments(allDocuments, tableFields, keyList):
+#     convertedDocuments = []
+#
+#     matchToList = tableFields
+#     matchFromList = keyList
+#
+#     # Make a filtered dictionary per document
+#     for document in allDocuments:
+#         print("Converting document "
+#               + str(allDocuments.index(document) + 1) + " of " + str(len(allDocuments)) + "...")
+#
+#         for item in keyList
+#         filteredDict = outputInterestingData(document, keyList)
+#
+#         # Massage the filtered dictionary to the right values for SQL
+#         for item in matchToList:
+#             if isinstance(matchFromList[matchToList.index(item)], (list,)):
+#                 currentItem = matchFromList[matchToList.index(item)]
+#                 fieldString = ""
+#                 for itemInList in currentItem:
+#                     fieldString += itemInList
+#                     fieldString += "."
+#                 fieldString = fieldString[:-1]
+#                 filteredDict[item] = filteredDict.pop(fieldString)
+#             else:
+#                 filteredDict[item] = filteredDict.pop(
+#                     matchFromList[matchToList.index(item)])
+#
+#         convertedDocuments.append(filteredDict)
+#
+#     print(str(len(allDocuments)) + " documents converted succesfully\n")
+#
+#     return convertedDocuments
+
+
+def makeSQLQuery(table, tableFields):
+    queryFunction = "INSERT INTO "
+    queryDefinition = "VALUES "
+    queryTable = table
+
+    queryFields = " ("
+    queryValues = "("
+
+    for item in tableFields:
+        queryFields += item
+        queryFields += ", "
+        queryValues += "%("
+        queryValues += item
+        queryValues += ")s, "
+
+    queryFields = queryFields[:-2] + ") "
+    queryValues = queryValues[:-2] + ");"
+
+    query = queryFunction + queryTable + \
+        queryFields + queryDefinition + queryValues
+
+    return query

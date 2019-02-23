@@ -6,6 +6,7 @@
 from VariableStore import tableDict
 import psycopg2 as pgc
 from ConfigParser import getConfig
+import DataFilter as df
 
 
 # Define functions
@@ -44,8 +45,8 @@ def connectPostgreSQL(database="", configFile="Code/Config.ini", configSection="
         if client.closed == 0 and cursor.closed == 0:
             print("Connection succeeded.\n")
         else:
-            print("Client closed: " + str(client.closed) +
-                  " Cursor closed: " + str(cursor.closed))
+            print("Client closed: " + str(client.closed)
+                  + " Cursor closed: " + str(cursor.closed))
 
     except (Exception, pgc.DatabaseError) as error:
         print(error)
@@ -69,23 +70,19 @@ def disconnectPostgreSQL(client, cursor):
     print("Connection closed.\n")
 
 
-def executeCommand(client, cursor, commands):
-    """
-    Execute commands with the cursor.
+def insertDocuments(convertedDocuments, database, table, tableFields):
+    query = df.makeSQLQuery(table, tableFields)
 
-    Arguments:
-        client:   The client session.
-        cursor:   The cursor session.
-        commands: List of commands to execute.
+    client, cursor = connectPostgreSQL(database)
 
-    Returns:
-        Nothing
-    """
-
-    for command in commands:
-        cursor.execute(command)
+    for document in convertedDocuments:
+        print("Inserting document "
+              + str(convertedDocuments.index(document) + 1) + " of " + str(len(convertedDocuments)) + "...")
+        cursor.execute(query, document)
         client.commit()
-        print("Ran command: " + str(command))
+
+    print(str(len(convertedDocuments)) + " documents inserted succesfully\n")
+    disconnectPostgreSQL(client, cursor)
 
 
 def initDatabase(database):
@@ -120,7 +117,10 @@ def addTables(database):
         """select relname from pg_class where relkind='r' and relname !~ '^(pg_|sql_)';""")
     print("Current tables: " + str(cursor.fetchall()) + "\n")
 
-    executeCommand(client, cursor, tableDict[database])
+    for item in tableDict[database]:
+        cursor.execute(item)
+        client.commit()
+        print("Ran command: " + str(item))
 
     cursor.execute(
         """select relname from pg_class where relkind='r' and relname !~ '^(pg_|sql_)';""")
