@@ -35,6 +35,6 @@ keyListProducts = ["_id", "name", "brand", "gender", ["price", "selling_price"],
                    "sub_sub_category", "predict_out_of_stock_date", "recommendable", "fast_mover", "herhaalaankopen"]
 
 
-tableFieldsStock = ["id", "productid", "date", "stocklevel"]
-
-keyListStock = ["id", "productid", ["stock", "date"], ["stock", "stock_level"]]
+# tableFieldsStock = ["id", "productid", "date", "stocklevel"]
+#
+# keyListStock = ["id", "productid", ["stock", "date"], ["stock", "stock_level"]]
