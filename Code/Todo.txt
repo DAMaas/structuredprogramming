@@ -37,3 +37,15 @@ for document in allDocuments:
     for key in MongoData:
         if key in keylist:
             processedDocument[key] = MongoData[key]
+
+
+
+
+            # # Create function to expand documents when there is a list of values in them
+            # for document in multipleDocuments:
+            #     for key in document:
+            #         if isinstance(key, list):
+            #             for list in key:
+            #                 for item in list:
+            #                     append to list
+            #                 append list to whole
