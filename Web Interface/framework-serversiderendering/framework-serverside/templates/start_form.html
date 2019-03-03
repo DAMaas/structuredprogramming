@@ -1,0 +1,42 @@
+$def with (web_text)
+
+<html>
+
+<head>
+	<style>
+		border-collapse: collapse;
+		border: 1px solid black;
+	</style>
+	<style media="screen" type="text/css">
+		.not-active {
+			pointer-events: none;
+			cursor: default;
+		}
+	</style>
+	<title>$web_text['title']</title>
+</head>
+
+<body>
+
+	<div>
+		<h1>$web_text['title']</h1>
+
+		<form action="/" method="post">
+			Zoeken:<br>
+			<input type="text" name="zoeken" value="">
+			<br>
+			<br><br>
+			<input type="submit" value="Submit">
+		</form>
+
+		<p>
+			<div>
+				$web_text['disclaimer']
+				<br>
+			</div>
+		</p>
+
+
+</body>
+
+</html>

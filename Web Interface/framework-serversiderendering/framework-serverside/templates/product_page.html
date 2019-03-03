@@ -1,0 +1,60 @@
+$def with (web_text, prod_info)
+
+
+<html>
+<head>
+    <style>
+        border-collapse: collapse;
+    	border: 1px solid black;
+    </style>
+    <style media="screen" type="text/css">
+    	.not-active {
+ 		  pointer-events: none;
+		   cursor: default;
+		}
+    </style>
+<title>$web_text['title']</title>
+</head>
+<body>
+
+	<div>
+	<h1>$web_text['title']</h1>
+
+	Product <i> $prod_info['name'] </i> gevonden de productcategorie: <i> $prod_info['category'] </i> 
+	<br>
+	Product foto:<br>
+	<img src =$prod_info['name_png']>
+	</div>
+
+	<div>
+		Aanbevolen producten<br>
+	</div>
+
+
+	<table>
+	$if prod_info['rec0']:
+		<!-- <i>$prod_info['rec0']</i> -->
+		<img src =$prod_info['rec0_png']>
+	$if prod_info['rec1']:
+		<!-- <i>$prod_info['rec1']</i> -->
+		<img src =$prod_info['rec1_png']>
+	$if prod_info['rec2']:
+		<!-- <i>$prod_info['rec1']</i> -->
+		<img src =$prod_info['rec2_png']>
+	
+	</table>
+	
+	<br> 
+
+
+	<p>
+<div>
+	$web_text['disclaimer']
+	<br>
+</div> 
+</p>
+
+
+</body>
+
+</html>
